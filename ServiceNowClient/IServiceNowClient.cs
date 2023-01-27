@@ -24,7 +24,7 @@ namespace CyberArk.Extensions.ServiceNow
     public class SysIdRoot
     {
         [JsonProperty("result")]
-        public List<SysIdResult> SysIdResults;
+        public List<SysIdResult>? SysIdResults;
     }
 
     public class UserPassResult
@@ -36,6 +36,6 @@ namespace CyberArk.Extensions.ServiceNow
     public class UserPassRoot
     {
         [JsonProperty("result")]
-        public UserPassResult UserPassResults;
+        public UserPassResult? UserPassResults;
     }
 }

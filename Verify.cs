@@ -133,12 +133,11 @@ namespace CyberArk.Extensions.ServiceNow
                     // Extract sys_id From JSON
                     Logger.WriteLine(string.Format(action + Resources.RecieveActionResponse), LogLevel.INFO);
                     Logger.WriteLine(string.Format("Extracting sys_id from {0} response.", serviceNowAddress), LogLevel.INFO);
-                    SysIdRoot deserializedResponse = JsonConvert.DeserializeObject<SysIdRoot>(sysIdResponse.Data.MessageContent);
-                    var sysId = deserializedResponse.SysIdResults[0];
+                    SysIdRoot? deserializedResponse = JsonConvert.DeserializeObject<SysIdRoot>(sysIdResponse.Data.MessageContent);
                     // Ensure sys_id is not null, throw error otherwise         
-                    if (sysId.SysId == null)
+                    if (deserializedResponse?.SysIdResults?[0] == null)
                         throw new ServiceNowServiceException(string.Format(Resources.SysIdError), PluginErrors.JSON_SYSID_ERROR);
-                    Logger.WriteLine(string.Format("Exracted sys_id: {0}", sysId.SysId.ToString()), LogLevel.INFO);
+                    Logger.WriteLine(string.Format("Exracted sys_id: {0}", deserializedResponse.SysIdResults[0].ToString()), LogLevel.INFO);
                     Logger.WriteLine(Resources.SysIdSuccess, LogLevel.INFO);
                 }
 

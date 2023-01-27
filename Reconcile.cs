@@ -135,12 +135,11 @@ namespace CyberArk.Extensions.ServiceNow
                 {
                     // Extract sys_id From JSON
                     Logger.WriteLine(string.Format("Extracting sys_id from {0} response.", serviceNowAddress), LogLevel.INFO);
-                    SysIdRoot deserializedResponse = JsonConvert.DeserializeObject<SysIdRoot>(sysIdResponse.Data.MessageContent);
-                    var sysId = deserializedResponse.SysIdResults[0];
+                    SysIdRoot? deserializedResponse = JsonConvert.DeserializeObject<SysIdRoot>(sysIdResponse.Data.MessageContent);
                     // Ensure sys_id is not null, throw error otherwise         
-                    if (sysId.SysId == null)
+                    if (deserializedResponse?.SysIdResults?[0] == null)
                         throw new ServiceNowServiceException(string.Format(Resources.SysIdError), PluginErrors.JSON_SYSID_ERROR);
-                    Logger.WriteLine(string.Format("Exracted sys_id: {0}", sysId.SysId.ToString()), LogLevel.INFO);
+                    Logger.WriteLine(string.Format("Exracted sys_id: {0}", deserializedResponse.SysIdResults[0].ToString()), LogLevel.INFO);
                     Logger.WriteLine(Resources.SysIdSuccess, LogLevel.INFO);
                     Logger.WriteLine(string.Format("sys_id " + Resources.ActionResponseSuccess), LogLevel.INFO);
 
@@ -152,7 +151,7 @@ namespace CyberArk.Extensions.ServiceNow
                     {
                         Scheme = "https",
                         Port = -1,
-                        Path = string.Format("/api/now/table/sys_user/{0}", sysId.SysId.ToString())
+                        Path = string.Format("/api/now/table/sys_user/{0}", deserializedResponse.SysIdResults[0].ToString())
                     };
                     Uri validatedChangeAddress = changeAddressBuilder.Uri;
                     string serviceNowChangeAddress = validatedChangeAddress.ToString();
@@ -194,10 +193,9 @@ namespace CyberArk.Extensions.ServiceNow
                     {
                         // Extract user_password From JSON - password will be hashed
                         Logger.WriteLine(string.Format(action + Resources.RecieveActionResponse), LogLevel.INFO);
-                        UserPassRoot deserializedPassResponse = JsonConvert.DeserializeObject<UserPassRoot>(reconcilePassResponse.Data.MessageContent);
-                        var userPass = deserializedPassResponse.UserPassResults;
+                        UserPassRoot? deserializedPassResponse = JsonConvert.DeserializeObject<UserPassRoot>(reconcilePassResponse.Data.MessageContent);
                         // Ensure userPass is not null, throw error otherwise         
-                        if (userPass.UserPassword == null)
+                        if (deserializedPassResponse?.UserPassResults == null)
                             throw new ServiceNowServiceException(string.Format(action + Resources.ActionResponseFailure), PluginErrors.JSON_REC_ERROR);
                         Logger.WriteLine(string.Format(action + Resources.ActionResponseSuccess), LogLevel.INFO);
                     }
